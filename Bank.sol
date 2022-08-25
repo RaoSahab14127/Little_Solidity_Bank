@@ -6,32 +6,38 @@ contract bankt {
     address payable user;
     address key;
     address payable manager;
+    mapping (address=>uint) mapi;
+    uint BB;
     constructor(){
-        manager = payable (0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2);
+        manager = payable (msg.sender);
+        
     }
 
-    
-    function set(address _key) public {
-        key = _key;
-    }
-        function get() public view returns(uint) {
-        require(msg.sender==key, "not Matched");
-        return(msg.sender.balance);
+    function get() public view returns(uint) {
+        return(mapi[msg.sender]);
     }
     function  deposit() payable public
     {
         manager.transfer(msg.value);
+        mapi[msg.sender]+= msg.value;
+        BB+=msg.value;
+
     }
         function getbank() public view returns(uint) {
-        require(msg.sender==0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, "not Matched");
-        return(msg.sender.balance);
+        require(msg.sender==manager, "not Matched");
+        return(BB);
     }
         function WD(address _aa) public payable {
             user = payable (_aa);
-            require(msg.sender==0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, "not Matched");
             
-            
-        user.transfer(msg.value);
+            require((msg.sender==manager && (mapi[user]>=msg.value)), "not Matched");
+            user.transfer(msg.value);
+            uint a = msg.value;
+            mapi[user] -= a;
+            BB-=msg.value;
+
+
+
     }
 
 
